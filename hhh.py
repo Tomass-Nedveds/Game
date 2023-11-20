@@ -43,17 +43,17 @@ class Player(pygame.sprite.Sprite):  # Игрок
         if key_tracking[pygame.K_RIGHT]:
             self.speedX = speeds
 
-        if key_tracking[pygame.K_a]:
-            self.speedX = -speeds
-
-        if key_tracking[pygame.K_d]:
-            self.speedX = speeds
-
         if key_tracking[pygame.K_UP]:
             self.speedY = -speeds
 
         if key_tracking[pygame.K_DOWN]:
             self.speedY = speeds
+
+        if key_tracking[pygame.K_a]:
+            self.speedX = -speeds
+
+        if key_tracking[pygame.K_d]:
+            self.speedX = speeds
 
         if key_tracking[pygame.K_w]:
             self.speedY = -speeds
@@ -147,7 +147,7 @@ pygame.mixer.music.load("Audio/Shut.wav")
 
 all_sprites = pygame.sprite.Group()  # Добовление спрайта в групу
 enemy = pygame.sprite.Group()
-player = Player()
+player = Player() # Создание экземпляра класса Player
 all_sprites.add(player)
 ammon = pygame.sprite.Group()
 
