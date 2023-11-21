@@ -1,11 +1,5 @@
 import random
 import pygame
-import os
-from os import path
-
-# импорт папки игры
-image_folders = path.join((__file__), 'Image')
-audio_folders = path.join((__file__), 'Audio')
 
 width = 600  # Окно игры
 height = 800
