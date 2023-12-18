@@ -13,6 +13,14 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Игра Бога")
 clock = pygame.time.Clock()
 
+class Button (pygame.sprite.Sprite):
+    def __init__ (self):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = pygame.transform.scale (pygame.image.load("Image/5261929.png"), (120,80))
+        self.rect = self.image.get_rect()
+        self.rect.center = (width * 0.5, height -300)
+
 class Player(pygame.sprite.Sprite):  # Игрок
     def __init__(self):  # Инициализация игрокая
         pygame.sprite.Sprite.__init__(self)
@@ -118,7 +126,6 @@ class Ammo(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(buletImg, (40, 40))  # прописываем переменную с картинкой и ее размер
-        self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -130,29 +137,38 @@ class Ammo(pygame.sprite.Sprite):
             self.kill()  # убиваем
 
 # наша игровая графика загрузка картинок
-backgrounds = pygame.image.load("background.png").convert_alpha()
-back_rect = backgrounds.get_rect()
-playerimg = pygame.image.load("player.png").convert_alpha()
-buletImg = pygame.image.load("Bulet.png").convert_alpha()  # вариант создать новый список и пройтись в цикле по этому списку перебирая другие
-rockImg = pygame.image.load("Rock2.png").convert_alpha()  # вариаты картинок например для врагов или пулек
+#backgrounds = pygame.image.load("Image/background.png").convert_alpha()
+
+
+playerimg = pygame.image.load("Image/player.png").convert_alpha()
+buletImg = pygame.image.load("Image/Bulet.png").convert_alpha()  # вариант создать новый список и пройтись в цикле по этому списку перебирая другие
+rockImg = pygame.image.load("Image/Rock2.png").convert_alpha()  # вариаты картинок например для врагов или пулек
 pygame.mixer.music.set_volume(0.3)
 
-pygame.mixer.music.load("Shut.wav")
-
+pygame.mixer.music.load("Audio/Shut.wav")
 all_sprites = pygame.sprite.Group()  # Добовление спрайта в групу
 enemy = pygame.sprite.Group()
-player = Player() # Создание экземпляра класса Player
-all_sprites.add(player)
+player = Player()  # Создание экземпляра класса Player
+
+def startlvl ():
+    all_sprites.add(player)
+    for i in range(6):  # спавним мобов кол-во
+        mob = Enemy()
+        all_sprites.add(mob)
+        enemy.add(mob)
+    backgrounds = pygame.image.load("Image/background.png").convert_alpha()
+    Startlvl = True
+    return backgrounds,Startlvl
+
+button = Button()
+all_sprites.add(button)
 ammon = pygame.sprite.Group()
-
-for i in range(6):  # спавним мобов кол-во
-    mob = Enemy()
-    all_sprites.add(mob)
-    enemy.add(mob)
-
 fontname = pygame.font.match_font('None')
 score = 0
 
+Startlvl = False
+backgrounds = pygame.image.load("Image/background.blur.png").convert_alpha()
+back_rect = backgrounds.get_rect()
 
 def scoretext(surf, text, size, x, y):
     font = pygame.font.Font(fontname, size)
@@ -173,6 +189,11 @@ while run:
             if event.key == pygame.K_SPACE:  # нажатие на пробел
                 player.shoot()  # вызов функции стрельбы
 
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if button.rect.collidepoint(pygame.mouse.get_pos()):
+                button.kill()
+                backgrounds,Startlvl = startlvl()
+
     all_sprites.update()
 
     collision = pygame.sprite.groupcollide(enemy, ammon, True, True)  # выстрел игрока
@@ -192,7 +213,9 @@ while run:
 
     screen.blit(backgrounds, back_rect)
     all_sprites.draw(screen)
-    scoretext(screen, 'Score: ' + str(score), 50, width / 2, 10)
+
+    if Startlvl:
+        scoretext(screen, 'Score: ' + str(score), 50, width / 2, 10)
 
     # После отрисовки всего, переворачиваем экран
     pygame.display.flip()
